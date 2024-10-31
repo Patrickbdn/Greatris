@@ -31,7 +31,7 @@
     
             // Exemple : placer une pièce (valeur 1) dans la grille
             tetrisGrid.setCell(0, 4, 1); // Place une case occupée au sommet, au centre
-            System.out.println("Après placement d'une pièce :");
+            System.out.println("Après une pièce :");
             tetrisGrid.displayGrid(); // Affiche la grille après ajout de la pièce
         }
     }
