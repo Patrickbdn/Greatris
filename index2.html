@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tetris Web</title>
+    <style>
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 20px);
+            grid-template-rows: repeat(10, 20px);
+            gap: 1px;
+        }
+        .cell {
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .wall { background-color: #333; color: white; }
+        .block { background-color: #0077ff; color: white; }
+        .empty { background-color: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Tetris Web</h1>
+    <div id="grid" class="grid"></div>
+
+    <script>
+        const nbLignes = 10;
+        const nbColonnes = 12;
+        const gridElement = document.getElementById('grid');
+        let grille = [];
+        let posX = 1; // Position de départ du bloc en X
+        let posY = nbLignes - 2; // Position de départ du bloc en Y (en bas de la grille)
+
+        // Initialisation de la grille et de l'affichage HTML
+        function initialiserGrille() {
+            grille = [];
+            gridElement.innerHTML = ''; // Réinitialise l'affichage HTML
+
+            for (let i = 0; i < nbLignes; i++) {
+                const row = [];
+                for (let j = 0; j < nbColonnes; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+
+                    if (i === 0 || i === nbLignes - 1 || j === 0 || j === nbColonnes - 1) {
+                        cell.classList.add('wall');
+                        cell.textContent = '#';
+                        row.push('#');
+                    } else {
+                        cell.classList.add('empty');
+                        cell.textContent = ' ';
+                        row.push(' ');
+                    }
+
+                    gridElement.appendChild(cell);
+                }
+                grille.push(row);
+            }
+            placerBloc();
+        }
+
+        // Met à jour l'affichage HTML de la grille
+        function afficherGrille() {
+            const cells = gridElement.children;
+            let index = 0;
+
+            for (let i = 0; i < nbLignes; i++) {
+                for (let j = 0; j < nbColonnes; j++) {
+                    cells[index].textContent = grille[i][j];
+                    cells[index].className = 'cell';
+                    if (grille[i][j] === '#') cells[index].classList.add('wall');
+                    else if (grille[i][j] === 'O') cells[index].classList.add('block');
+                    else cells[index].classList.add('empty');
+                    index++;
+                }
+            }
+        }
+
+        // Place le bloc à sa position
+        function placerBloc() {
+            grille[posY][posX] = 'O';
+            afficherGrille();
+        }
+
+        // Déplace le bloc à une nouvelle position si possible
+        function deplacerBloc(newPosX, newPosY) {
+            if (newPosX > 0 && newPosX < nbColonnes - 1 && newPosY > 0 && newPosY < nbLignes - 1) {
+                grille[posY][posX] = ' '; // Efface l'ancienne position
+                posX = newPosX;
+                posY = newPosY;
+                placerBloc();
+            }
+        }
+
+        // Déplace automatiquement le bloc vers le haut
+        function deplacerBlocAuto() {
+            grille[posY][posX] = ' '; // Efface l'ancienne position
+            posY--;
+
+            if (posY <= 0) {
+                posY = nbLignes - 2; // Repositionne en bas
+            }
+
+            placerBloc();
+        }
+
+        // Gère les touches de déplacement
+        document.addEventListener('keydown', (e) => {
+            switch (e.key) {
+                case 'ArrowUp':
+                    deplacerBloc(posX, posY - 1);
+                    break;
+                case 'ArrowDown':
+                    deplacerBloc(posX, posY + 1);
+                    break;
+                case 'ArrowLeft':
+                    deplacerBloc(posX - 1, posY);
+                    break;
+                case 'ArrowRight':
+                    deplacerBloc(posX + 1, posY);
+                    break;
+            }
+        });
+
+        // Initialisation de la grille
+        initialiserGrille();
+
+        // Déclenche le déplacement automatique toutes les secondes
+        setInterval(deplacerBlocAuto, 1000);
+    </script>
+</body>
+</html>

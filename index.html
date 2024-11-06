@@ -1,76 +1,16 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tetris Grid</title>
-    <style>
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(12, 30px);
-            grid-template-rows: repeat(10, 30px);
-            gap: 2px;
-        }
-        .cell {
-            width: 30px;
-            height: 30px;
-            border: 1px solid #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        .occupied {
-            background-color: #000;
-            color: #fff;
-        }
-    </style>
-</head>
-<body>
-
-<h1>Tetris Grid</h1>
-<div id="gridContainer" class="grid"></div>
-
-<script>
-    class TetrisGrid {
-        constructor(rows, cols) {
-            this.rows = rows;
-            this.cols = cols;
-            this.grid = Array.from({ length: rows }, () => Array(cols).fill(0)); // Initialisation de la grille avec des zéros
-        }
-
-        displayGrid() {
-            const gridContainer = document.getElementById("gridContainer");
-            gridContainer.innerHTML = ''; // Efface le contenu précédent
-            for (let i = 0; i < this.rows; i++) {
-                for (let j = 0; j < this.cols; j++) {
-                    const cell = document.createElement("div");
-                    cell.className = "cell";
-                    if (this.grid[i][j] === 1) {
-                        cell.classList.add("occupied");
-                        cell.textContent = "1"; // Affiche la valeur 1
-                    }
-                    gridContainer.appendChild(cell);
-                }
-            }
-        }
-
-        setCell(row, col, value) {
-            if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
-                this.grid[row][col] = value;
-            }
-        }
-    }
-
-    // Initialisation de la grille Tetris
-    const tetrisGrid = new TetrisGrid(10, 12);
-    tetrisGrid.displayGrid(); // Affiche la grille vide
-
-    // Exemple : placer une pièce dans la grille
-    tetrisGrid.setCell(0, 4, 1); // Place une case occupée au sommet, au centre
-    tetrisGrid.setCell(4, 7, 1); // Place une autre case occupée
-    tetrisGrid.displayGrid(); // Affiche la grille après ajout des pièces
-</script>
-
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris Simple</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Tetris Simple</h1>
+    <div id="game-container">
+      <pre id="grid"></pre>
+    </div>
+    <script src="script.js"></script>
+  </body>
 </html>
