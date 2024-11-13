@@ -5,7 +5,44 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class TetrisGame extends JFrame implements KeyListener {
-    private int nbLignes = 10;
+    // Liste de pièces Tetris représentées par des matrices 2D de caractères
+    private char[][][] pieces = {
+        { // Pièce "I"
+            {' ', 'O', ' ', ' '},
+            {' ', 'O', ' ', ' '},
+            {' ', 'O', ' ', ' '},
+            {' ', 'O', ' ', ' '}
+        },
+        { // Pièce "O"
+            {'O', 'O'},
+            {'O', 'O'}
+        },
+        { // Pièce "T"
+            {' ', 'O', ' '},
+            {'O', 'O', 'O'}
+        },
+        { // Pièce "L"
+            {'O', ' '},
+            {'O', ' '},
+            {'O', 'O'}
+        },
+        { // Pièce "J"
+            {' ', 'O'},
+            {' ', 'O'},
+            {'O', 'O'}
+        },
+        { // Pièce "S"
+            {' ', 'O', 'O'},
+            {'O', 'O', ' '}
+        },
+        { // Pièce "Z"
+            {'O', 'O', ' '},
+            {' ', 'O', 'O'}
+        }
+    };
+
+    private char[][] pieceActuelle;
+    private int nbLignes = 20;
     private int nbColonnes = 12;
     private char[][] grille = new char[nbLignes][nbColonnes];
     private int posX = 1; // Position de départ du bloc en X (colonne)
@@ -17,6 +54,9 @@ public class TetrisGame extends JFrame implements KeyListener {
         setSize(300, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addKeyListener(this);
+
+        // Sélectionner une pièce aléatoirement
+        pieceActuelle = pieces[(int) (Math.random() * pieces.length)];
 
         // Initialiser la grille avec les bords et l'espace intérieur
         initialiserGrille();
@@ -42,7 +82,6 @@ public class TetrisGame extends JFrame implements KeyListener {
                 }
             }
         }
-        grille[posY][posX] = 'O'; // Position initiale du bloc
     }
 
     private void afficherGrille() {
@@ -50,13 +89,39 @@ public class TetrisGame extends JFrame implements KeyListener {
         System.out.print("\033[H\033[2J");
         System.out.flush();
 
-        // Afficher la grille
+        // Place la pièce actuelle dans la grille temporairement
+        for (int i = 0; i < pieceActuelle.length; i++) {
+            for (int j = 0; j < pieceActuelle[i].length; j++) {
+                if (pieceActuelle[i][j] == 'O') {
+                    // Vérifiez que les indices sont dans les limites de la grille
+                    if (posY + i >= 0 && posY + i < nbLignes && posX + j >= 0 && posX + j < nbColonnes) {
+                        grille[posY + i][posX + j] = 'O';
+                    }
+                }
+            }
+        }
+        
+
+        // Affiche la grille
         for (int i = 0; i < nbLignes; i++) {
             for (int j = 0; j < nbColonnes; j++) {
                 System.out.print(grille[i][j] + " ");
             }
             System.out.println();
         }
+
+        // Nettoyer la pièce de la grille après l'affichage
+        for (int i = 0; i < pieceActuelle.length; i++) {
+            for (int j = 0; j < pieceActuelle[i].length; j++) {
+                if (pieceActuelle[i][j] == 'O') {
+                    // Vérifie que les indices sont dans les limites de la grille
+                    if (posY + i >= 0 && posY + i < nbLignes && posX + j >= 0 && posX + j < nbColonnes) {
+                        grille[posY + i][posX + j] = ' ';
+                    }
+                }
+            }
+        }
+        
     }
 
     private void deplacerBloc(int newPosX, int newPosY) {

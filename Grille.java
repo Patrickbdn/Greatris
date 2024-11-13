@@ -1,3 +1,7 @@
+/**
+ * The Grille class in Java represents a grid structure with methods for initializing, modifying,
+ * displaying, and comparing grids.
+ */
 public class Grille {    
     public StringBuilder grille[];
 
@@ -49,6 +53,7 @@ public class Grille {
             if ((grille[i]).compareTo(g2.grille[i])!=0) return false;
         return true;
     }
+   
     public static void main(String[] args) {
         Grille g = new Grille();
         g.affiche();
