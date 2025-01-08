@@ -5,7 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class TetrisGame extends JFrame implements KeyListener {
-    // Liste de pièces Tetris représentées par des matrices 2D de caractères
+    /**  Liste de pièces Tetris représentées par des matrices 2D de caractères */
     private char[][][] pieces = {
         { // Pièce "I"
             {' ', 'O', ' ', ' '},
@@ -55,14 +55,14 @@ public class TetrisGame extends JFrame implements KeyListener {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addKeyListener(this);
 
-        // Sélectionner une pièce aléatoirement
+        // Sélectionne une pièce aléatoirement
         pieceActuelle = pieces[(int) (Math.random() * pieces.length)];
 
-        // Initialiser la grille avec les bords et l'espace intérieur
+        // Initialise la grille avec les bords et l'espace intérieur
         initialiserGrille();
         afficherGrille();
 
-        // Créer un Timer pour déplacer automatiquement le bloc vers le haut
+        // Crée un Timer pour déplacer automatiquement le bloc vers le haut
         Timer timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -85,7 +85,7 @@ public class TetrisGame extends JFrame implements KeyListener {
     }
 
     private void afficherGrille() {
-        // Effacer l'écran
+        // Efface l'écran
         System.out.print("\033[H\033[2J");
         System.out.flush();
 
@@ -128,12 +128,12 @@ public class TetrisGame extends JFrame implements KeyListener {
         // Vérifier si la nouvelle position est à l'intérieur des bords
         if (newPosX > 0 && newPosX < nbColonnes - 1 && newPosY > 0 && newPosY < nbLignes - 1) {
             // Enlever le bloc de sa position actuelle
-            grille[posY][posX] = ' ';
+           grille[posY][posX] = ' ';
             // Mettre à jour la position
             posX = newPosX;
             posY = newPosY;
             // Placer le bloc à la nouvelle position
-            grille[posY][posX] = 'O';
+            //grille[posY][posX] = 'O';
             afficherGrille();
         }
     }
