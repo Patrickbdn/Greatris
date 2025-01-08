@@ -46,7 +46,7 @@ const tetriminos = {
 
 // Initialisation de la grille et des variables
 const nbLignes = 20;
-const nbColonnes = 12;
+const nbColonnes = 10;
 let grille = Array.from({ length: nbLignes }, () =>
   Array(nbColonnes).fill(" ")
 );
@@ -66,7 +66,7 @@ function choisirTetriminoAleatoire() {
 // Fonction pour afficher la grille dans le HTML
 function afficherGrille() {
   const gridElement = document.getElementById("grid");
-  gridElement.innerHTML = grille.map((row) => row.join("")).join("<br>");
+  gridElement.innerHTML = grille.map((row) => row.join(" ")).join("<br>");
 }
 
 // Fonction pour vérifier les collisions
@@ -92,11 +92,46 @@ function collision(x, y, forme) {
 
 // Fonction pour afficher un Tetrimino dans la grille
 function afficherTetrimino(x, y, effacer = false) {
+  // Nettoyer les pièces en mouvement et le fantôme
+  for (let i = 0; i < nbLignes; i++) {
+    for (let j = 0; j < nbColonnes; j++) {
+      if (grille[i][j] === "X" || grille[i][j] === "O") {
+        grille[i][j] = " ";
+      }
+    }
+  }
+
+  // Affiche le fantôme si ce n'est pas pour effacer
+  if (!effacer) {
+    afficherFantome(x, y);
+  }
+
+  // Affiche la pièce en mouvement
   const forme = currentTetrimino[rotationIndex];
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
         grille[y + i][x + j] = effacer ? " " : "X";
+      }
+    }
+  }
+}
+
+// Fonction pour afficher le fantôme
+function afficherFantome(x, y) {
+  let ghostY = y;
+
+  // Descend la pièce jusqu'à la première collision
+  while (!collision(x, ghostY + 1, currentTetrimino[rotationIndex])) {
+    ghostY++;
+  }
+
+  // Affiche la forme fantôme
+  const forme = currentTetrimino[rotationIndex];
+  for (let i = 0; i < forme.length; i++) {
+    for (let j = 0; j < forme[i].length; j++) {
+      if (forme[i][j] === 1) {
+        grille[ghostY + i][x + j] = "O"; // Représente le fantôme
       }
     }
   }
@@ -108,16 +143,17 @@ function fixerTetrimino(x, y) {
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
-        grille[y + i][x + j] = "X";
+        grille[y + i][x + j] = "F"; // Marque comme fixé
       }
     }
   }
+  nettoyerLignes();
 }
 
 // Fonction pour nettoyer les lignes pleines
 function nettoyerLignes() {
   for (let i = 0; i < nbLignes; i++) {
-    if (grille[i].every((cell) => cell === "X")) {
+    if (grille[i].every((cell) => cell === "F")) {
       grille.splice(i, 1);
       grille.unshift(Array(nbColonnes).fill(" "));
     }
@@ -162,12 +198,12 @@ function gameLoop() {
     posY++;
   } else {
     fixerTetrimino(posX, posY);
-    nettoyerLignes();
     posX = Math.floor(nbColonnes / 2) - 1;
     posY = 0;
     rotationIndex = 0;
     currentTetrimino = choisirTetriminoAleatoire();
 
+    // Vérifie le game over
     if (collision(posX, posY, currentTetrimino[rotationIndex])) {
       alert("Game Over !");
       return;
