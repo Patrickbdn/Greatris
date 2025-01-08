@@ -143,7 +143,7 @@ function fixerTetrimino(x, y) {
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
-        grille[y + i][x + j] = "F"; // Marque comme fixé
+        grille[y + i][x + j] = "■"; // Marque comme fixé
       }
     }
   }
@@ -153,7 +153,7 @@ function fixerTetrimino(x, y) {
 // Fonction pour nettoyer les lignes pleines
 function nettoyerLignes() {
   for (let i = 0; i < nbLignes; i++) {
-    if (grille[i].every((cell) => cell === "F")) {
+    if (grille[i].every((cell) => cell === "■")) {
       grille.splice(i, 1);
       grille.unshift(Array(nbColonnes).fill(" "));
     }
