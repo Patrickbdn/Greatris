@@ -6,7 +6,7 @@ import java.awt.event.KeyListener;
 
 public class TetrisGame extends JFrame implements KeyListener {
     /**  Liste de pièces Tetris représentées par des matrices 2D de caractères */
-    private char[][][] pieces = {
+    private char[][][]    pieces = {
         { // Pièce "I"
             {' ', 'O', ' ', ' '},
             {' ', 'O', ' ', ' '},
@@ -38,7 +38,18 @@ public class TetrisGame extends JFrame implements KeyListener {
         { // Pièce "Z"
             {'O', 'O', ' '},
             {' ', 'O', 'O'}
-        }
+        },
+        { // Pièce "M"
+            {'O',' ','O'},
+            {'O','O','O'},
+            {'O',' ','O'},
+            {'O',' ','O'}
+        },
+        { // Pièce "X"
+            {'O',' ','O'},
+            {'O','O','O'},
+            {'O',' ','O'}
+        },
     };
 
     private char[][] pieceActuelle;
@@ -54,10 +65,11 @@ public class TetrisGame extends JFrame implements KeyListener {
         setSize(300, 400);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         addKeyListener(this);
+        
 
         // Sélectionne une pièce aléatoirement
         pieceActuelle = pieces[(int) (Math.random() * pieces.length)];
-
+       
         // Initialise la grille avec les bords et l'espace intérieur
         initialiserGrille();
         afficherGrille();
@@ -86,8 +98,8 @@ public class TetrisGame extends JFrame implements KeyListener {
 
     private void afficherGrille() {
         // Efface l'écran
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+     //System.out.print("\033[H\033[2J");
+      //  System.out.flush();
 
         // Place la pièce actuelle dans la grille temporairement
         for (int i = 0; i < pieceActuelle.length; i++) {
@@ -105,9 +117,9 @@ public class TetrisGame extends JFrame implements KeyListener {
         // Affiche la grille
         for (int i = 0; i < nbLignes; i++) {
             for (int j = 0; j < nbColonnes; j++) {
-                System.out.print(grille[i][j] + " ");
+                //System.out.print(grille[i][j] + " ");
             }
-            System.out.println();
+            //System.out.println();
         }
 
         // Nettoyer la pièce de la grille après l'affichage
