@@ -152,6 +152,7 @@ let posX = Math.floor(nbColonnes / 2) - 1;
 let posY = 0;
 let rotationIndex = 0;
 let currentTetrimino = choisirTetriminoAleatoire();
+let score = 0;
 
 // Fonction pour choisir un Tetrimino aléatoire
 function choisirTetriminoAleatoire() {
@@ -250,12 +251,21 @@ function fixerTetrimino(x, y) {
 
 // Fonction pour nettoyer les lignes pleines
 function nettoyerLignes() {
+  let lignesEffacees = 0; // Compteur du nombre de lignes effacées
   for (let i = 0; i < nbLignes; i++) {
     if (grille[i].every((cell) => cell === "■")) {
       grille.splice(i, 1);
       grille.unshift(Array(nbColonnes).fill(" "));
+      lignesEffacees++; // Incrémente le nombre de lignes effacées
     }
   }
+  function afficherScore() {
+    document.getElementById("score").innerText = "Score : " + score;
+  }
+
+  // Ajoute 10 points par ligne effacée
+  score += lignesEffacees * 10;
+  afficherScore(); // Met à jour l'affichage du score
 }
 
 // Gestion des touches
