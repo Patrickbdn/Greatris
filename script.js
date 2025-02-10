@@ -1,6 +1,7 @@
 // Définition des formes des Tetriminos
 const tetriminos = {
   I: [
+    // lettre I
     [
       [0, 0, 0, 0],
       [1, 1, 1, 1],
@@ -15,12 +16,14 @@ const tetriminos = {
     ],
   ],
   O: [
+    // lettre O
     [
       [1, 1],
       [1, 1],
     ],
   ],
   T: [
+    // lettre T
     [
       [0, 1, 0],
       [1, 1, 1],
@@ -43,6 +46,7 @@ const tetriminos = {
     ],
   ],
   L: [
+    // lettre L
     [
       [1, 0, 0],
       [1, 0, 0],
@@ -65,6 +69,7 @@ const tetriminos = {
     ],
   ],
   J: [
+    // lettre J
     [
       [1, 0, 0],
       [1, 0, 0],
@@ -88,6 +93,7 @@ const tetriminos = {
   ],
 
   S: [
+    // lettre S
     [
       [0, 1, 1],
       [1, 1, 0],
@@ -108,6 +114,7 @@ const tetriminos = {
     ],
   ],
   Z: [
+    // lettre Z
     [
       [1, 1, 0],
       [0, 1, 1],
@@ -129,6 +136,7 @@ const tetriminos = {
   ],
 
   X: [
+    // lettre X
     [
       [1, 0, 1],
       [1, 1, 1],
