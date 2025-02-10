@@ -3,7 +3,7 @@
  * displaying, and comparing grids.
  */
 
-/* c'est la classe */
+/* c'est la classe à  Dallas */
 
 public class Grille {    
     public StringBuilder grille[];
