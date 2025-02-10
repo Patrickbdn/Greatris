@@ -2,6 +2,9 @@
  * The Grille class in Java represents a grid structure with methods for initializing, modifying,
  * displaying, and comparing grids.
  */
+
+/* c'est la classe à  Dallas */
+
 public class Grille {    
     public StringBuilder grille[];
 
