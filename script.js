@@ -15,6 +15,7 @@ const tetriminos = {
       [0, 1, 0, 0],
     ],
   ],
+
   O: [
     // lettre O
     [
@@ -22,6 +23,7 @@ const tetriminos = {
       [1, 1],
     ],
   ],
+
   T: [
     // lettre T
     [
@@ -45,6 +47,7 @@ const tetriminos = {
       [0, 1, 0],
     ],
   ],
+
   L: [
     // lettre L
     [
@@ -68,6 +71,7 @@ const tetriminos = {
       [0, 1, 1],
     ],
   ],
+
   J: [
     // lettre J
     [
@@ -113,6 +117,7 @@ const tetriminos = {
       [0, 1, 1],
     ],
   ],
+  
   Z: [
     // lettre Z
     [
