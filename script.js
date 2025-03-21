@@ -15,7 +15,7 @@ const tetriminos = {
         [0, 1, 0, 0],
       ],
     ],
-    color: "cyan" // Cyan pour les pièces I
+    color: "cyan", // Cyan pour les pièces I
   },
   O: {
     rotations: [
@@ -24,7 +24,7 @@ const tetriminos = {
         [1, 1],
       ],
     ],
-    color: "yellow" // Jaune pour les pièces O
+    color: "red", // Rouge pour les pièces O
   },
   T: {
     rotations: [
@@ -49,7 +49,7 @@ const tetriminos = {
         [0, 1, 0],
       ],
     ],
-    color: "purple" // Violet pour les pièces T
+    color: "purple", // Violet pour les pièces T
   },
   U: {
     rotations: [
@@ -74,7 +74,7 @@ const tetriminos = {
         [1, 1, 1],
       ],
     ],
-    color: "green" // Vert pour les pièces U
+    color: "green", // Vert pour les pièces U
   },
 };
 
@@ -90,38 +90,44 @@ let rotationIndex = 0;
 let currentTetriminoType = "";
 let currentTetrimino = choisirTetriminoAleatoire();
 
+// Variables pour le score
+let score = 0;
+let niveau = 1;
+let lignesEliminees = 0;
+
 // Fonction pour choisir un Tetrimino aléatoire
 function choisirTetriminoAleatoire() {
   const formesDisponibles = Object.keys(tetriminos);
-  currentTetriminoType = formesDisponibles[Math.floor(Math.random() * formesDisponibles.length)];
+  currentTetriminoType =
+    formesDisponibles[Math.floor(Math.random() * formesDisponibles.length)];
   return tetriminos[currentTetriminoType];
 }
 
 // Fonction pour afficher la grille dans le HTML
 function afficherGrille() {
   const gridElement = document.getElementById("grid");
-  
+
   // Style pour la grille
   gridElement.style.display = "grid";
   gridElement.style.gridTemplateColumns = `repeat(${nbColonnes}, 20px)`;
   gridElement.style.gridTemplateRows = `repeat(${nbLignes}, 20px)`;
-  gridElement.style.gap = "1px";
-  gridElement.style.backgroundColor = "transparent";
-  gridElement.style.border = "none";
+  gridElement.style.gridGap = "1px";
+  gridElement.style.backgroundColor = "#e0e0e0"; // Fond de grille plus clair
+  gridElement.style.border = "2px solid #333";
   gridElement.style.padding = "0";
-  
+
   // Vider la grille
   gridElement.innerHTML = "";
-  
+
   // Remplir avec les cellules
   for (let i = 0; i < nbLignes; i++) {
     for (let j = 0; j < nbColonnes; j++) {
       const cell = grille[i][j];
       const cellElement = document.createElement("div");
-      
+
       cellElement.style.width = "20px";
       cellElement.style.height = "20px";
-      
+
       if (cell.type === "X") {
         cellElement.style.backgroundColor = cell.color;
       } else if (cell.type === "O") {
@@ -130,12 +136,18 @@ function afficherGrille() {
       } else if (cell.type === "■") {
         cellElement.style.backgroundColor = cell.color;
       } else {
-        cellElement.style.backgroundColor = "transparent";
+        cellElement.style.backgroundColor = "#f5f5f5"; // Cellules vides plus claires
+        cellElement.style.border = "1px solid #e0e0e0"; // Bordure légère pour les cellules
       }
-      
+
       gridElement.appendChild(cellElement);
     }
   }
+
+  // Mettre à jour l'affichage du score
+  document.getElementById("score-value").textContent = score;
+  document.getElementById("niveau-value").textContent = niveau;
+  document.getElementById("lignes-value").textContent = lignesEliminees;
 }
 
 // Fonction pour vérifier les collisions
@@ -180,8 +192,8 @@ function afficherTetrimino(x, y, effacer = false) {
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
-        grille[y + i][x + j] = effacer 
-          ? { type: " " } 
+        grille[y + i][x + j] = effacer
+          ? { type: " " }
           : { type: "X", color: currentTetrimino.color };
       }
     }
@@ -202,7 +214,10 @@ function afficherFantome(x, y) {
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
-        grille[ghostY + i][x + j] = { type: "O", color: currentTetrimino.color }; // Représente le fantôme
+        grille[ghostY + i][x + j] = {
+          type: "O",
+          color: currentTetrimino.color,
+        }; // Représente le fantôme
       }
     }
   }
@@ -223,11 +238,28 @@ function fixerTetrimino(x, y) {
 
 // Fonction pour nettoyer les lignes pleines
 function nettoyerLignes() {
+  let lignesNettoyees = 0;
+
   for (let i = 0; i < nbLignes; i++) {
     if (grille[i].every((cell) => cell.type === "■")) {
       grille.splice(i, 1);
       grille.unshift(Array(nbColonnes).fill({ type: " " }));
+      lignesNettoyees++;
     }
+  }
+
+  // Mise à jour du score si des lignes ont été nettoyées
+  if (lignesNettoyees > 0) {
+    // Calcul du score basé sur le nombre de lignes et le niveau actuel
+    // Système de points classique de Tetris
+    const points = [0, 100, 300, 500, 800]; // 0, 1, 2, 3, ou 4 lignes
+    score += points[lignesNettoyees] * niveau;
+
+    // Mise à jour du compteur de lignes
+    lignesEliminees += lignesNettoyees;
+
+    // Mise à jour du niveau (chaque 10 lignes)
+    niveau = Math.floor(lignesEliminees / 10) + 1;
   }
 }
 
@@ -250,16 +282,25 @@ document.addEventListener("keydown", function (event) {
     !collision(posX, posY + 1, currentTetrimino.rotations[rotationIndex])
   ) {
     posY++;
+    // Ajout de points pour le soft drop (descente manuelle)
+    score += 1;
   } else if (event.key === "ArrowUp") {
-    const nextRotation = (rotationIndex + 1) % currentTetrimino.rotations.length;
+    const nextRotation =
+      (rotationIndex + 1) % currentTetrimino.rotations.length;
     if (!collision(posX, posY, currentTetrimino.rotations[nextRotation])) {
       rotationIndex = nextRotation;
     }
   } else if (event.key === " ") {
     // Espace pour hard drop
-    while (!collision(posX, posY + 1, currentTetrimino.rotations[rotationIndex])) {
+    let dropDistance = 0;
+    while (
+      !collision(posX, posY + 1, currentTetrimino.rotations[rotationIndex])
+    ) {
       posY++;
+      dropDistance++;
     }
+    // Ajout de points pour le hard drop (2 points par cellule)
+    score += dropDistance * 2;
   }
 
   afficherTetrimino(posX, posY);
@@ -281,7 +322,7 @@ function gameLoop() {
 
     // Vérifie le game over
     if (collision(posX, posY, currentTetrimino.rotations[rotationIndex])) {
-      alert("Game Over !");
+      alert("Game Over ! Score final: " + score);
       return;
     }
   }
@@ -289,26 +330,123 @@ function gameLoop() {
   afficherTetrimino(posX, posY);
   afficherGrille();
 
-  setTimeout(gameLoop, 500);
+  // Ajustement de la vitesse en fonction du niveau
+  const vitesse = Math.max(100, 500 - (niveau - 1) * 50);
+  setTimeout(gameLoop, vitesse);
 }
 
 // Initialisation de la page HTML
-window.onload = function() {
-  // Créer la div du jeu si elle n'existe pas déjà
-  if (!document.getElementById("grid")) {
-    const gridElement = document.createElement("div");
-    gridElement.id = "grid";
-    document.body.appendChild(gridElement);
-    
-    // Style du body et du conteneur
-    document.body.style.backgroundColor = "#111";
-    document.body.style.display = "flex";
-    document.body.style.justifyContent = "center";
-    document.body.style.alignItems = "center";
-    document.body.style.height = "100vh";
-    document.body.style.margin = "0";
-  }
-  
+window.onload = function () {
+  // Créer le conteneur principal
+  const gameContainer = document.createElement("div");
+  gameContainer.id = "game-container";
+  gameContainer.style.display = "flex";
+  gameContainer.style.flexDirection = "row";
+  gameContainer.style.justifyContent = "center";
+  gameContainer.style.gap = "20px";
+  document.body.appendChild(gameContainer);
+
+  // Créer la div du jeu
+  const gridElement = document.createElement("div");
+  gridElement.id = "grid";
+  gameContainer.appendChild(gridElement);
+
+  // Créer la section d'informations
+  const infoSection = document.createElement("div");
+  infoSection.id = "info-section";
+  infoSection.style.display = "flex";
+  infoSection.style.flexDirection = "column";
+  infoSection.style.justifyContent = "flex-start";
+  infoSection.style.alignItems = "flex-start";
+  infoSection.style.padding = "15px";
+  infoSection.style.backgroundColor = "#f0f0f0";
+  infoSection.style.color = "#333";
+  infoSection.style.fontFamily = "Arial, sans-serif";
+  infoSection.style.borderRadius = "5px";
+  infoSection.style.boxShadow = "0 0 10px rgba(0,0,0,0.1)";
+  gameContainer.appendChild(infoSection);
+
+  // Ajouter les éléments d'information
+  const titleElement = document.createElement("h2");
+  titleElement.textContent = "TETRIS";
+  titleElement.style.margin = "0 0 20px 0";
+  titleElement.style.color = "#2a6";
+  infoSection.appendChild(titleElement);
+
+  // Score
+  const scoreDiv = document.createElement("div");
+  scoreDiv.style.marginBottom = "10px";
+  const scoreLabel = document.createElement("span");
+  scoreLabel.textContent = "Score: ";
+  scoreDiv.appendChild(scoreLabel);
+  const scoreValue = document.createElement("span");
+  scoreValue.id = "score-value";
+  scoreValue.textContent = "0";
+  scoreValue.style.fontWeight = "bold";
+  scoreDiv.appendChild(scoreValue);
+  infoSection.appendChild(scoreDiv);
+
+  // Niveau
+  const niveauDiv = document.createElement("div");
+  niveauDiv.style.marginBottom = "10px";
+  const niveauLabel = document.createElement("span");
+  niveauLabel.textContent = "Niveau: ";
+  niveauDiv.appendChild(niveauLabel);
+  const niveauValue = document.createElement("span");
+  niveauValue.id = "niveau-value";
+  niveauValue.textContent = "1";
+  niveauValue.style.fontWeight = "bold";
+  niveauDiv.appendChild(niveauValue);
+  infoSection.appendChild(niveauDiv);
+
+  // Lignes
+  const lignesDiv = document.createElement("div");
+  lignesDiv.style.marginBottom = "10px";
+  const lignesLabel = document.createElement("span");
+  lignesLabel.textContent = "Lignes: ";
+  lignesDiv.appendChild(lignesLabel);
+  const lignesValue = document.createElement("span");
+  lignesValue.id = "lignes-value";
+  lignesValue.textContent = "0";
+  lignesValue.style.fontWeight = "bold";
+  lignesDiv.appendChild(lignesValue);
+  infoSection.appendChild(lignesDiv);
+
+  // Contrôles
+  const controlsTitle = document.createElement("h3");
+  controlsTitle.textContent = "Contrôles";
+  controlsTitle.style.marginTop = "20px";
+  controlsTitle.style.marginBottom = "10px";
+  infoSection.appendChild(controlsTitle);
+
+  const controlsList = document.createElement("ul");
+  controlsList.style.padding = "0 0 0 20px";
+  controlsList.style.margin = "0";
+
+  const controls = [
+    "← → : Déplacer",
+    "↑ : Rotation",
+    "↓ : Descente",
+    "Espace : Chute rapide",
+  ];
+
+  controls.forEach((control) => {
+    const item = document.createElement("li");
+    item.textContent = control;
+    item.style.marginBottom = "5px";
+    controlsList.appendChild(item);
+  });
+
+  infoSection.appendChild(controlsList);
+
+  // Style du body et du conteneur
+  document.body.style.backgroundColor = "#e9e9e9"; // Fond global plus clair
+  document.body.style.display = "flex";
+  document.body.style.justifyContent = "center";
+  document.body.style.alignItems = "center";
+  document.body.style.height = "100vh";
+  document.body.style.margin = "0";
+
   // Lancer le jeu
   afficherGrille();
   gameLoop();
