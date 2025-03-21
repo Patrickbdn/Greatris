@@ -8,6 +8,7 @@ const tetriminos = {
       [0, 0, 0, 0],
       [0, 0, 0, 0],
     ],
+<<<<<<< HEAD
     [
       [0, 1, 0, 0],
       [0, 1, 0, 0],
@@ -153,6 +154,69 @@ const tetriminos = {
       [1, 1, 1],
     ],
   ],
+=======
+    color: "cyan", // Cyan pour les pièces I
+  },
+  O: {
+    rotations: [
+      [
+        [1, 1],
+        [1, 1],
+      ],
+    ],
+    color: "red", // Rouge pour les pièces O
+  },
+  T: {
+    rotations: [
+      [
+        [0, 1, 0],
+        [1, 1, 1],
+        [0, 0, 0],
+      ],
+      [
+        [0, 1, 0],
+        [1, 1, 0],
+        [0, 1, 0],
+      ],
+      [
+        [1, 1, 1],
+        [0, 1, 0],
+        [0, 0, 0],
+      ],
+      [
+        [0, 1, 0],
+        [0, 1, 1],
+        [0, 1, 0],
+      ],
+    ],
+    color: "purple", // Violet pour les pièces T
+  },
+  U: {
+    rotations: [
+      [
+        [1, 0, 1],
+        [1, 0, 1],
+        [1, 1, 1],
+      ],
+      [
+        [1, 1, 1],
+        [1, 0, 1],
+        [1, 0, 1],
+      ],
+      [
+        [1, 1, 1],
+        [1, 0, 0],
+        [1, 1, 1],
+      ],
+      [
+        [1, 1, 1],
+        [0, 0, 1],
+        [1, 1, 1],
+      ],
+    ],
+    color: "green", // Vert pour les pièces U
+  },
+>>>>>>> cad18ff (pièces en couleur)
 };
 
 // Initialisation de la grille et des variables
@@ -170,15 +234,60 @@ let score = 0;
 // Fonction pour choisir un Tetrimino aléatoire
 function choisirTetriminoAleatoire() {
   const formesDisponibles = Object.keys(tetriminos);
+<<<<<<< HEAD
   const formeChoisie =
     formesDisponibles[Math.floor(Math.random() * formesDisponibles.length)];
   return tetriminos[formeChoisie];
+=======
+  currentTetriminoType =
+    formesDisponibles[Math.floor(Math.random() * formesDisponibles.length)];
+  return tetriminos[currentTetriminoType];
+>>>>>>> cad18ff (pièces en couleur)
 }
 
 // Fonction pour afficher la grille dans le HTML
 function afficherGrille() {
   const gridElement = document.getElementById("grid");
+<<<<<<< HEAD
   gridElement.innerHTML = grille.map((row) => row.join(" ")).join("<br>");
+=======
+
+  // Style pour la grille
+  gridElement.style.display = "grid";
+  gridElement.style.gridTemplateColumns = `repeat(${nbColonnes}, 20px)`;
+  gridElement.style.gridTemplateRows = `repeat(${nbLignes}, 20px)`;
+  gridElement.style.gap = "1px";
+  gridElement.style.backgroundColor = "transparent";
+  gridElement.style.border = "none";
+  gridElement.style.padding = "0";
+
+  // Vider la grille
+  gridElement.innerHTML = "";
+
+  // Remplir avec les cellules
+  for (let i = 0; i < nbLignes; i++) {
+    for (let j = 0; j < nbColonnes; j++) {
+      const cell = grille[i][j];
+      const cellElement = document.createElement("div");
+
+      cellElement.style.width = "20px";
+      cellElement.style.height = "20px";
+
+      if (cell.type === "X") {
+        cellElement.style.backgroundColor = cell.color;
+      } else if (cell.type === "O") {
+        cellElement.style.backgroundColor = cell.color;
+        cellElement.style.opacity = "0.3";
+      } else if (cell.type === "■") {
+        cellElement.style.backgroundColor = cell.color;
+      } else {
+        cellElement.style.backgroundColor = "transparent";
+      }
+
+      gridElement.appendChild(cellElement);
+    }
+  }
+>>>>>>> cad18ff (pièces en couleur)
 }
 
 // Fonction pour vérifier les collisions
@@ -223,7 +332,13 @@ function afficherTetrimino(x, y, effacer = false) {
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
+<<<<<<< HEAD
         grille[y + i][x + j] = effacer ? " " : "X";
+=======
+        grille[y + i][x + j] = effacer
+          ? { type: " " }
+          : { type: "X", color: currentTetrimino.color };
+>>>>>>> cad18ff (pièces en couleur)
       }
     }
   }
@@ -243,7 +358,14 @@ function afficherFantome(x, y) {
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
+<<<<<<< HEAD
         grille[ghostY + i][x + j] = "O"; // Représente le fantôme
+=======
+        grille[ghostY + i][x + j] = {
+          type: "O",
+          color: currentTetrimino.color,
+        }; // Représente le fantôme
+>>>>>>> cad18ff (pièces en couleur)
       }
     }
   }
@@ -301,10 +423,25 @@ document.addEventListener("keydown", function (event) {
   ) {
     posY++;
   } else if (event.key === "ArrowUp") {
+<<<<<<< HEAD
     const nextRotation = (rotationIndex + 1) % currentTetrimino.length;
     if (!collision(posX, posY, currentTetrimino[nextRotation])) {
       rotationIndex = nextRotation;
     }
+=======
+    const nextRotation =
+      (rotationIndex + 1) % currentTetrimino.rotations.length;
+    if (!collision(posX, posY, currentTetrimino.rotations[nextRotation])) {
+      rotationIndex = nextRotation;
+    }
+  } else if (event.key === " ") {
+    // Espace pour hard drop
+    while (
+      !collision(posX, posY + 1, currentTetrimino.rotations[rotationIndex])
+    ) {
+      posY++;
+    }
+>>>>>>> cad18ff (pièces en couleur)
   }
 
   afficherTetrimino(posX, posY);
@@ -337,6 +474,30 @@ function gameLoop() {
   setTimeout(gameLoop, 500);
 }
 
+<<<<<<< HEAD
 // Initialisation du jeu
 afficherGrille();
 gameLoop();
+=======
+// Initialisation de la page HTML
+window.onload = function () {
+  // Créer la div du jeu si elle n'existe pas déjà
+  if (!document.getElementById("grid")) {
+    const gridElement = document.createElement("div");
+    gridElement.id = "grid";
+    document.body.appendChild(gridElement);
+
+    // Style du body et du conteneur
+    document.body.style.backgroundColor = "#111";
+    document.body.style.display = "flex";
+    document.body.style.justifyContent = "center";
+    document.body.style.alignItems = "center";
+    document.body.style.height = "100vh";
+    document.body.style.margin = "0";
+  }
+
+  // Lancer le jeu
+  afficherGrille();
+  gameLoop();
+};
+>>>>>>> cad18ff (pièces en couleur)
