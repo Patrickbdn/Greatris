@@ -3,12 +3,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url("océan tétris.png");
+  background-image: url("fond tétris.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0.8;
-  animation: pulse-bg 2s infinite alternate ease-in-out;
+  animation: pulse-bg 1.5s infinite alternate ease-in-out;
 }
 
 @keyframes pulse-bg {
@@ -17,7 +17,7 @@ body {
     opacity: 0.8;
   }
   100% {
-    background-size: 105%;
+    background-size: 110%;
     opacity: 1;
   }
 }

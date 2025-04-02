@@ -236,13 +236,47 @@ function afficherFantome(x, y) {
 // Fonction pour fixer un Tetrimino dans la grille
 function fixerTetrimino(x, y) {
   const forme = currentTetrimino.rotations[rotationIndex];
+
   for (let i = 0; i < forme.length; i++) {
     for (let j = 0; j < forme[i].length; j++) {
       if (forme[i][j] === 1) {
-        grille[y + i][x + j] = { type: "■", color: currentTetrimino.color }; // Marque comme fixé avec couleur
+        let newY = y + i;
+        let newX = x + j;
+
+        if (newY < nbLignes && newX >= 0 && newX < nbColonnes) {
+          // Si c'est la pièce Q, elle efface les blocs adjacents mais reste en place
+          if (currentTetriminoType === "Q") {
+            // Parcourir les cases adjacentes
+            const directions = [
+              [-1, 0], [1, 0], [0, -1], [0, 1], // Haut, Bas, Gauche, Droite
+              [-1, -1], [-1, 1], [1, -1], [1, 1] // Diagonales
+            ];
+
+            directions.forEach(([dy, dx]) => {
+              let adjY = newY + dy;
+              let adjX = newX + dx;
+
+              // Vérifier si la case adjacente est dans la grille et occupée
+              if (
+                adjY >= 0 && adjY < nbLignes &&
+                adjX >= 0 && adjX < nbColonnes &&
+                grille[adjY][adjX].type === "■"
+              ) {
+                grille[adjY][adjX] = { type: " ", color: "" }; // Efface la pièce adjacente
+              }
+            });
+
+            // La pièce Q se fixe normalement
+            grille[newY][newX] = { type: "■", color: currentTetrimino.color };
+          } else {
+            // Les autres pièces se fixent normalement
+            grille[newY][newX] = { type: "■", color: currentTetrimino.color };
+          }
+        }
       }
     }
   }
+
   nettoyerLignes();
 }
 
