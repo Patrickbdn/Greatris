@@ -1,3 +1,6 @@
+let isGamePaused = false;
+let isGameStopped = false;
+
 // Définition des formes des Tetriminos avec couleurs
 const tetriminos = {
   I: {
@@ -25,16 +28,6 @@ const tetriminos = {
       ],
     ],
     color: "red", // Rouge pour les pièces O
-  },
-  Q: {
-    rotations: [
-      [
-        [1, 1, 0],
-        [1, 1, 0],
-        [0, 0, 1],
-      ],
-    ],
-    color: "black", // Noir pour les pieces Q
   },
   T: {
     rotations: [
@@ -104,6 +97,11 @@ let currentTetrimino = choisirTetriminoAleatoire();
 let score = 0;
 let niveau = 1;
 let lignesEliminees = 0;
+
+// Nouveaux états de jeu
+let isGamePaused = false;
+let isGameStopped = false;
+let gameLoopTimeout = null;
 
 // Fonction pour choisir un Tetrimino aléatoire
 function choisirTetriminoAleatoire() {
@@ -275,6 +273,9 @@ function nettoyerLignes() {
 
 // Gestion des touches
 document.addEventListener("keydown", function (event) {
+  // Ignore les touches si le jeu est en pause ou arrêté
+  if (isGamePaused || isGameStopped) return;
+
   afficherTetrimino(posX, posY, true);
 
   if (
@@ -317,33 +318,87 @@ document.addEventListener("keydown", function (event) {
   afficherGrille();
 });
 
+// Fonction de pause
+function togglePause() {
+  isGamePaused = !isGamePaused;
+  const pauseButton = document.getElementById("pause-button");
+
+  if (isGamePaused) {
+    pauseButton.textContent = "Reprendre";
+    clearTimeout(gameLoopTimeout);
+  } else {
+    pauseButton.textContent = "Pause";
+    gameLoop();
+  }
+}
+
+// Fonction de stop
+function stopGame() {
+  isGameStopped = true;
+  clearTimeout(gameLoopTimeout);
+  alert(`Jeu arrêté. Score final: ${score}`);
+}
+
+// Fonction de restart
+function restartGame() {
+  // Réinitialiser toutes les variables
+  grille = Array.from({ length: nbLignes }, () =>
+    Array(nbColonnes).fill({ type: " " })
+  );
+  posX = Math.floor(nbColonnes / 2) - 1;
+  posY = 0;
+  rotationIndex = 0;
+  currentTetriminoType = "";
+  currentTetrimino = choisirTetriminoAleatoire();
+
+  // Réinitialiser les scores
+  score = 0;
+  niveau = 1;
+  lignesEliminees = 0;
+
+  // Réinitialiser les états du jeu
+  isGamePaused = false;
+  isGameStopped = false;
+
+  // Réinitialiser le bouton pause
+  const pauseButton = document.getElementById("pause-button");
+  pauseButton.textContent = "Pause";
+
+  // Réafficher la grille et relancer le jeu
+  afficherGrille();
+  gameLoop();
+}
+
 // Boucle de jeu
 function gameLoop() {
-  if (laPause == false) {
-    afficherTetrimino(posX, posY, true);
+  // Arrêter si le jeu est en pause ou arrêté
+  if (isGamePaused || isGameStopped) return;
 
-    if (!collision(posX, posY + 1, currentTetrimino.rotations[rotationIndex])) {
-      posY++;
-    } else {
-      fixerTetrimino(posX, posY);
-      posX = Math.floor(nbColonnes / 2) - 1;
-      posY = 0;
-      rotationIndex = 0;
-      currentTetrimino = choisirTetriminoAleatoire();
+  afficherTetrimino(posX, posY, true);
 
-      // Vérifie le game over
-      if (collision(posX, posY, currentTetrimino.rotations[rotationIndex])) {
-        alert("Game Over ! Score final: " + score);
-        return;
-      }
+  if (!collision(posX, posY + 1, currentTetrimino.rotations[rotationIndex])) {
+    posY++;
+  } else {
+    fixerTetrimino(posX, posY);
+    posX = Math.floor(nbColonnes / 2) - 1;
+    posY = 0;
+    rotationIndex = 0;
+    currentTetrimino = choisirTetriminoAleatoire();
+
+    // Vérifie le game over
+    if (collision(posX, posY, currentTetrimino.rotations[rotationIndex])) {
+      isGameStopped = true;
+      alert("Game Over ! Score final: " + score);
+      return;
     }
-
-    afficherTetrimino(posX, posY);
-    afficherGrille();
   }
+
+  afficherTetrimino(posX, posY);
+  afficherGrille();
+
   // Ajustement de la vitesse en fonction du niveau
   const vitesse = Math.max(100, 500 - (niveau - 1) * 50);
-  setTimeout(gameLoop, vitesse);
+  gameLoopTimeout = setTimeout(gameLoop, vitesse);
 }
 
 // Initialisation de la page HTML
@@ -450,6 +505,51 @@ window.onload = function () {
 
   infoSection.appendChild(controlsList);
 
+  // Boutons de contrôle du jeu
+  const buttonContainer = document.createElement("div");
+  buttonContainer.style.display = "flex";
+  buttonContainer.style.gap = "10px";
+  buttonContainer.style.marginTop = "20px";
+
+  // Bouton Pause
+  const pauseButton = document.createElement("button");
+  pauseButton.id = "pause-button";
+  pauseButton.textContent = "Pause";
+  pauseButton.style.padding = "10px 15px";
+  pauseButton.style.backgroundColor = "#4CAF50";
+  pauseButton.style.color = "white";
+  pauseButton.style.border = "none";
+  pauseButton.style.borderRadius = "5px";
+  pauseButton.style.cursor = "pointer";
+  pauseButton.addEventListener("click", togglePause);
+  buttonContainer.appendChild(pauseButton);
+
+  // Bouton Stop
+  const stopButton = document.createElement("button");
+  stopButton.textContent = "Stop";
+  stopButton.style.padding = "10px 15px";
+  stopButton.style.backgroundColor = "#f44336";
+  stopButton.style.color = "white";
+  stopButton.style.border = "none";
+  stopButton.style.borderRadius = "5px";
+  stopButton.style.cursor = "pointer";
+  stopButton.addEventListener("click", stopGame);
+  buttonContainer.appendChild(stopButton);
+
+  // Bouton Restart
+  const restartButton = document.createElement("button");
+  restartButton.textContent = "Restart";
+  restartButton.style.padding = "10px 15px";
+  restartButton.style.backgroundColor = "#2196F3";
+  restartButton.style.color = "white";
+  restartButton.style.border = "none";
+  restartButton.style.borderRadius = "5px";
+  restartButton.style.cursor = "pointer";
+  restartButton.addEventListener("click", restartGame);
+  buttonContainer.appendChild(restartButton);
+
+  infoSection.appendChild(buttonContainer);
+
   // Style du body et du conteneur
   document.body.style.backgroundColor = "#e9e9e9"; // Fond global plus clair
   document.body.style.display = "flex";
@@ -462,3 +562,60 @@ window.onload = function () {
   afficherGrille();
   gameLoop();
 };
+// Ajoutez ces écouteurs d'événements à la fin de votre script
+document.addEventListener("DOMContentLoaded", () => {
+  // Bouton Pause
+  const pauseButton = document.getElementById("pause-button");
+  pauseButton.addEventListener("click", togglePause);
+
+  // Bouton Stop
+  const stopButton = document.getElementById("stop-button");
+  stopButton.addEventListener("click", stopGame);
+
+  // Bouton Restart
+  const restartButton = document.getElementById("restart-button");
+  restartButton.addEventListener("click", restartGame);
+});
+
+// Fonction pour mettre en pause/reprendre le jeu
+function togglePause() {
+  isGamePaused = !isGamePaused;
+  const pauseButton = document.getElementById("pause-button");
+
+  if (isGamePaused) {
+    pauseButton.textContent = "Reprendre";
+    // Mettez en pause votre boucle de jeu ici
+    // Par exemple, si vous utilisez un setTimeout, vous pouvez le stopper
+  } else {
+    pauseButton.textContent = "Pause";
+    // Reprenez votre boucle de jeu ici
+  }
+}
+
+// Fonction pour arrêter le jeu
+function stopGame() {
+  isGameStopped = true;
+  // Arrêtez complètement le jeu
+  // Par exemple, arrêtez le timer, désactivez les contrôles
+  alert(`Jeu arrêté. Score final : ${score}`);
+}
+
+// Fonction pour redémarrer le jeu
+function restartGame() {
+  // Réinitialisez toutes vos variables de jeu
+  score = 0;
+  niveau = 1;
+  // Réinitialisez la grille
+  // Recommencez une nouvelle partie
+
+  // Mettez à jour l'affichage
+  document.getElementById("score-value").textContent = score;
+  document.getElementById("niveau-value").textContent = niveau;
+
+  // Réinitialisez l'état du jeu
+  isGamePaused = false;
+  isGameStopped = false;
+
+  // Recommencez le jeu
+  // Appelez votre fonction qui initialise/recommence le jeu
+}

@@ -5,13 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tetris Simple</title>
     <link rel="stylesheet" href="style.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: #f0f0f0;
+      }
+      #game-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+      #game-info {
+        background-color: #e0e0e0;
+        padding: 20px;
+        border-radius: 10px;
+      }
+      .game-buttons {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+      .game-buttons button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        color: white;
+      }
+      #pause-button {
+        background-color: #4caf50;
+      }
+      #stop-button {
+        background-color: #f44336;
+      }
+      #restart-button {
+        background-color: #2196f3;
+      }
+    </style>
   </head>
   <body>
+    <script>
+      var laPause = false;
+    </script>
     <h1>Tetris Simple</h1>
-    <p id="score">Score : 0</p>
+
     <div id="game-container">
-      <pre id="grid"></pre>
+      <div id="grid-container">
+        <pre id="grid"></pre>
+      </div>
+
+      <div id="game-info">
+        <p id="score">Score : <span id="score-value">0</span></p>
+        <p id="niveau">Niveau : <span id="niveau-value">1</span></p>
+        <p id="lignes">Lignes : <span id="lignes-value">0</span></p>
+
+        <div class="game-buttons">
+          <button
+            id="pause-button"
+            onclick="laPause=true;alert('Le jeu est en pause')"
+          >
+            Pause
+          </button>
+          <button id="stop-button" onclick="">Stop</button>
+          <button id="restart-button" onclick="laPause=false">Restart</button>
+        </div>
+      </div>
     </div>
-    <script src="script.js"></script>
+
+    <script src="Script.js"></script>
   </body>
 </html>

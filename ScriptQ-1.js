@@ -1,3 +1,74 @@
+function detruirePiecesAutourQ(x, y) {
+  if (currentTetriminoType !== "Q") return;
+
+  const forme = currentTetrimino.rotations[rotationIndex];
+  const positionsAPerturber = new Set();
+
+  // Trouver toutes les positions de la pièce Q
+  for (let i = 0; i < forme.length; i++) {
+    for (let j = 0; j < forme[i].length; j++) {
+      if (forme[i][j] === 1) {
+        const posQ = `${y + i},${x + j}`;
+        positionsAPerturber.add(posQ);
+
+        // Ajouter toutes les positions adjacentes
+        const directions = [
+          [-1, 0],
+          [1, 0],
+          [0, -1],
+          [0, 1],
+        ];
+        for (const [dx, dy] of directions) {
+          const posAdj = `${y + i + dx},${x + j + dy}`;
+          positionsAPerturber.add(posAdj);
+        }
+      }
+    }
+  }
+
+  // Supprimer les pièces aux positions trouvées
+  for (const pos of positionsAPerturber) {
+    const [posY, posX] = pos.split(",").map(Number);
+
+    if (posY >= 0 && posY < nbLignes && posX >= 0 && posX < nbColonnes) {
+      if (grille[posY][posX].type === "■") {
+        console.log(`Destruction de la pièce à la position (${posX}, ${posY})`);
+        grille[posY][posX] = { type: " " };
+      }
+    }
+  }
+
+  // Réinitialiser l'affichage après la destruction
+  afficherGrille();
+  nettoyerLignes();
+}
+
+// Modifier la fonction fixerTetrimino pour inclure la destruction
+function fixerTetrimino(x, y) {
+  const forme = currentTetrimino.rotations[rotationIndex];
+  for (let i = 0; i < forme.length; i++) {
+    for (let j = 0; j < forme[i].length; j++) {
+      if (forme[i][j] === 1) {
+        grille[y + i][x + j] = { type: "■", color: currentTetrimino.color };
+      }
+    }
+  }
+
+  // Appeler la nouvelle fonction de destruction si c'est une pièce Q
+  detruirePiecesAutourQ(x, y);
+
+  // Préparer la prochaine pièce
+  posX = Math.floor(nbColonnes / 2) - 1;
+  posY = 0;
+  rotationIndex = 0;
+  currentTetrimino = choisirTetriminoAleatoire();
+
+  // Vérifie le game over
+  if (collision(posX, posY, currentTetrimino.rotations[rotationIndex])) {
+    alert("Game Over ! Score final: " + score);
+    return;
+  }
+}
 // Définition des formes des Tetriminos avec couleurs
 const tetriminos = {
   I: {

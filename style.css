@@ -3,12 +3,25 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-image: url("océan tétris.png"); /* Ajoute cette ligne */
-  background-size: cover; /* Ajuste l'image pour couvrir toute la page */
-  background-position: center; /* Positionne l'image au centre */
-  background-repeat: no-repeat; /* Empêche l'image de se répéter */
-  opacity: 0.8; /* Réduit l'opacité pour créer un effet de filigrane */
+  background-image: url("océan tétris.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  animation: pulse-bg 2s infinite alternate ease-in-out;
 }
+
+@keyframes pulse-bg {
+  0% {
+    background-size: 100%;
+    opacity: 0.8;
+  }
+  100% {
+    background-size: 105%;
+    opacity: 1;
+  }
+}
+
 #game-container {
   border: 2px solid #333;
   padding: 10px;
