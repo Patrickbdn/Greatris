@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tetris avec Authentification</title>
+    <link rel="stylesheet" href="../CSS/style.css" />
+  </head>
+  <body>
+    <div id="authContainer">
+      <div id="loginForm">
+        <h2>Connexion</h2>
+        <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" />
+        <input type="password" id="loginPassword" placeholder="Mot de passe" />
+        <button id="loginButton">Se connecter</button>
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("loginButton")
+        .addEventListener("click", function () {
+          const username = document.getElementById("loginUsername").value;
+          const password = document.getElementById("loginPassword").value;
+
+          if (!username || !password) {
+            alert("Veuillez remplir tous les champs");
+            return;
+          }
+
+          fetch("../PHP/auth.php", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              pseudo: username,
+              password: password,
+            }),
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+            })
+            .then((data) => {
+              console.log("Données reçues :", data);
+              if (data.success) {
+                window.location.href = data.redirect; // Redirige vers grille.html
+              } else {
+                alert(data.message || "Erreur lors de la connexion");
+              }
+            })
+            .catch((error) => {
+              console.error("Erreur lors de la connexion :", error);
+            });
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url("../images/fondtetris.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  opacity: 0.8;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(10, 20px); /* nbColonnes */
+  grid-template-rows: repeat(20, 20px); /* nbLignes */
+  grid-gap: 1px;
+  background-color: #e0e0e0;
+  border: 2px solid #333;
+  width: 200px; /* Largeur de la grille */
+  height: 400px; /* Hauteur de la grille */
+}
+
+#grid div {
+  width: 20px; /* Largeur des cellules */
+  height: 20px; /* Hauteur des cellules */
+}
+
+@keyframes pulse-bg {
+  0% {
+    background-size: 100%;
+    opacity: 0.8;
+  }
+  100% {
+    background-size: 110%;
+    opacity: 1;
+  }
+}
+
+pre {
+  font-size: 18px;
+  line-height: 1.2;
+}
+
+/* Conteneur principal pour la grille et les tableaux */
+#game-wrapper {
+  display: flex;
+  justify-content: flex-start; /* Aligne les éléments à gauche */
+  align-items: flex-start; /* Aligne les éléments en haut */
+  gap: 20px; /* Espace entre la grille et les tableaux */
+  margin-top: 20px;
+}
+
+/* Conteneur pour les tableaux (scores et utilisateur) */
+#info-container {
+  display: flex;
+  flex-direction: column; /* Empile les tableaux verticalement */
+  gap: 20px; /* Espace entre les tableaux */
+}
+
+/* Grille du jeu */
+#game-container {
+  display: grid;
+  grid-template-columns: repeat(10, 20px); /* 10 colonnes de 20px */
+  grid-template-rows: repeat(20, 20px); /* 20 lignes de 20px */
+  gap: 1px;
+  background-color: #ddd;
+  padding: 5px;
+  border: 2px solid #333;
+}
+
+/* Tableau utilisateur et tableau des scores */
+#scoreboard,
+#user-info {
+  font-family: Arial, sans-serif;
+  border: 2px solid #333;
+  padding: 10px;
+  background-color: #f9f9f9;
+  width: 200px; /* Largeur fixe pour les tableaux */
+}
+
+#scoreboard table,
+#user-info table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#scoreboard th,
+#scoreboard td,
+#user-info th,
+#user-info td {
+  text-align: left;
+  padding: 5px;
+  border-bottom: 1px solid #ddd;
+}
+
+#scoreboard th,
+#user-info th {
+  font-weight: bold;
+  color: #333;
+}
+
+#scoreboard td,
+#user-info td {
+  text-align: right;
+  color: #555;
+}
+
+/* Boutons de contrôle */
+.control-buttons {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column; /* Empile les boutons verticalement */
+  gap: 10px; /* Espace entre les boutons */
+}
+
+.control-buttons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+}
+
+.pause-button {
+  background-color: #4caf50; /* Vert */
+}
+
+.restart-button {
+  background-color: #2196f3; /* Bleu */
+}
+
+.stop-button {
+  background-color: #f44336; /* Rouge */
+}
+
+.control-buttons button:hover {
+  opacity: 0.9;
+}
+
+/* Styles pour l'authentification */
+#auth-container {
+  max-width: 400px;
+  margin: 50px auto;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.auth-buttons {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.auth-buttons button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  background-color: #2196f3;
+}
+
+.toggle-form {
+  margin-top: 15px;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.toggle-form a {
+  color: #2196f3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* Classes pour contrôler l'affichage */
+.hidden {
+  display: none;
+}
