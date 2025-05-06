@@ -8,8 +8,9 @@ body {
   background-position: center;
   background-repeat: no-repeat;
   opacity: 0.8;
-  animation: pulse-bg 1.5s infinite alternate ease-in-out;
-}
+  overflow: hidden; /* Empêche le défilement */
+  height: 100vh; /* Fixe la hauteur à 100% de la fenêtre */
+  }
 
 @keyframes pulse-bg {
   0% {
